@@ -1,0 +1,65 @@
+from PIL import Image
+
+def encrypt_image(image_path, key):
+    try:
+        img = Image.open(image_path)
+        width, height = img.size
+
+        encrypted_img = Image.new('RGB', (width, height))
+        pixels_encrypted = []
+
+        for y in range(height):
+            for x in range(width):
+                r, g, b = img.getpixel((x, y))
+                r = (r + key) % 256
+                g = (g + key) % 256
+                b = (b + key) % 256
+                pixels_encrypted.append((r, g, b))
+
+        encrypted_img.putdata(pixels_encrypted)
+        encrypted_img.save("encrypted_image.png")
+        print("Image encrypted successfully.")
+    except Exception as e:
+        print("Error:", e)
+
+def decrypt_image(encrypted_image_path, key):
+    try:
+        img = Image.open(encrypted_image_path)
+        width, height = img.size
+
+        decrypted_img = Image.new('RGB', (width, height))
+        pixels_decrypted = []
+
+        for y in range(height):
+            for x in range(width):
+                r, g, b = img.getpixel((x, y))
+                r = (r - key) % 256
+                g = (g - key) % 256
+                b = (b - key) % 256
+                pixels_decrypted.append((r, g, b))
+
+        decrypted_img.putdata(pixels_decrypted)
+        decrypted_img.save("decrypted_image.png")
+        print("Image decrypted successfully.")
+    except Exception as e:
+        print("Error:", e)
+
+def main():
+    while True:
+        choice = input("Do you want to encrypt or decrypt an image? (encrypt/decrypt/exit): ").lower()
+        if choice == 'encrypt':
+            image_path = input("Enter the path of the image to encrypt: ")
+            key = int(input("Enter the encryption key (integer value): "))
+            encrypt_image(image_path, key)
+        elif choice == 'decrypt':
+            encrypted_image_path = input("Enter the path of the encrypted image: ")
+            key = int(input("Enter the decryption key (integer value): "))
+            decrypt_image(encrypted_image_path, key)
+        elif choice == 'exit':
+            print("Exiting program.")
+            break
+        else:
+            print("Invalid choice. Please enter 'encrypt', 'decrypt', or 'exit'.")
+
+if __name__ == "__main__":
+    main()
